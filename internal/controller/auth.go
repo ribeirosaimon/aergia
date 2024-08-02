@@ -20,11 +20,13 @@ func NewAuthController() AuthControllerInterface {
 }
 
 type authControllerImpl struct {
-	authService *service.AuthServiceInterface
+	authService service.AuthServiceInterface
 }
 
 func newAuthControllerImpl() AuthControllerInterface {
-	return &authControllerImpl{}
+	return &authControllerImpl{
+		authService: service.NewAuthService(),
+	}
 }
 
 func (a *authControllerImpl) Login(c *gin.Context) {
@@ -39,8 +41,8 @@ func (a *authControllerImpl) Login(c *gin.Context) {
 	if err := c.ShouldBindJSON(&loginReq); err != nil {
 		return
 	}
-	
-	a.authService.
+
+	a.authService.Login(c, loginReq.Login, loginReq.Password)
 }
 
 func init() {

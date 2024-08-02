@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"sync"
+
+	"github.com/ribeirosaimon/aergia/internal/repository"
 )
 
 var authOnce sync.Once
@@ -17,13 +19,15 @@ func NewAuthService() AuthServiceInterface {
 }
 
 type authServiceImpl struct {
+	userRepository repository.UserRepositoryInterface
 }
 
 func newAuthServiceImpl() AuthServiceInterface {
-	return &authServiceImpl{}
+	return &authServiceImpl{
+		userRepository: repository.NewUserRepository(),
+	}
 }
 
-func (a authServiceImpl) Login(ctx context.Context, login, pass string) error {
-	// TODO implement me
-	panic("implement me")
+func (a *authServiceImpl) Login(ctx context.Context, login, pass string) error {
+
 }
