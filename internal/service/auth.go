@@ -24,10 +24,10 @@ type authServiceImpl struct {
 
 func newAuthServiceImpl() AuthServiceInterface {
 	return &authServiceImpl{
-		userRepository: repository.NewUserRepository(),
+		// userRepository: repository.NewUserRepository(),
 	}
 }
 
 func (a *authServiceImpl) Login(ctx context.Context, login, pass string) error {
-
+	return nil
 }

@@ -1,9 +1,11 @@
 package service
 
 import (
+	"os"
 	"sync"
 	"time"
 
+	"github.com/ribeirosaimon/aergia-utils/constants"
 	"github.com/ribeirosaimon/aergia/internal/dto"
 )
 
@@ -27,7 +29,8 @@ func newHealthServiceImpl() HealthService {
 
 func (h *healthServiceImpl) GetHealth() (*dto.Health, error) {
 	return &dto.Health{
-		Status: "up",
-		Date:   time.Now(),
+		Status:      "up",
+		Date:        time.Now(),
+		Environment: os.Getenv(string(constants.AERGIA)),
 	}, nil
 }

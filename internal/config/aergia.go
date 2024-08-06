@@ -11,8 +11,7 @@ type AergiaServer struct {
 }
 
 type AergiaConfig struct {
-	ApiPort  string
-	mongoUri string
+	ApiPort string
 }
 
 func NewAergiaServer(config *AergiaConfig) *AergiaServer {
