@@ -2,11 +2,11 @@ module github.com/ribeirosaimon/aergia
 
 go 1.22.1
 
-replace github.com/ribeirosaimon/aergia-utils => /home/saimon/Documents/Estudos/aergia-project/aergia-utils
+//replace github.com/ribeirosaimon/aergia-utils => /home/saimon/Documents/Estudos/aergia-project/aergia-utils
 
 require (
 	github.com/gin-gonic/gin v1.10.0
-	github.com/ribeirosaimon/aergia-utils v0.0.0-20240802004123-2e73d15fb432
+	github.com/ribeirosaimon/aergia-utils v1.0.0
 	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.16.0
 )
