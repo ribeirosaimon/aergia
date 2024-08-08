@@ -10,4 +10,5 @@ type HealthControllerInterface interface {
 
 type AuthControllerInterface interface {
 	Login(c *gin.Context)
+	SignUp(c *gin.Context)
 }

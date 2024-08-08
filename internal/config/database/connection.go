@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/mongo"
 	"github.com/ribeirosaimon/aergia-utils/properties"
+	"github.com/ribeirosaimon/aergia-utils/storage/mongo"
 )
 
 func NewConnection(ctx context.Context) mongo.AergiaMongoInterface {

@@ -5,6 +5,8 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirosaimon/aergia-utils/response"
+	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/ribeirosaimon/aergia/internal/service"
 )
 
@@ -29,6 +31,16 @@ func newAuthControllerImpl() AuthControllerInterface {
 	}
 }
 
+func (a *authControllerImpl) SignUp(c *gin.Context) {
+	var userDto dto.User
+	if err := c.ShouldBindJSON(&userDto); err != nil {
+		response.AergiaResponseStatusBadRequest(c, err)
+		return
+	}
+
+	response.AergiaResponseOk(c, "uhu")
+}
+
 func (a *authControllerImpl) Login(c *gin.Context) {
 	type LoginRequest struct {
 		Login    string `json:"login" binding:"required"`
@@ -39,7 +51,7 @@ func (a *authControllerImpl) Login(c *gin.Context) {
 
 	// Bind JSON to struct
 	if err := c.ShouldBindJSON(&loginReq); err != nil {
-		return
+		response.AergiaResponseStatusBadRequest(c, err)
 	}
 
 	a.authService.Login(c, loginReq.Login, loginReq.Password)
@@ -47,4 +59,5 @@ func (a *authControllerImpl) Login(c *gin.Context) {
 
 func init() {
 	NewAergiaController(authGroup, "", http.MethodPost, NewAuthController().Login)
+	NewAergiaController(authGroup, "/signup", http.MethodPost, NewAuthController().SignUp)
 }
