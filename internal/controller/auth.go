@@ -37,7 +37,7 @@ func (a *authControllerImpl) SignUp(c *gin.Context) {
 		response.AergiaResponseStatusBadRequest(c, err)
 		return
 	}
-
+	a.authService.SignUp(c, &userDto)
 	response.AergiaResponseOk(c, "uhu")
 }
 

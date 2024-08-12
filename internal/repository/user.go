@@ -2,12 +2,14 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
+	"github.com/pkg/errors"
 	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/logs"
+	"github.com/ribeirosaimon/aergia-utils/storage/pgsql"
 	"github.com/ribeirosaimon/aergia/internal/config/database"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var userOnce sync.Once
@@ -15,27 +17,63 @@ var userRepository UserRepositoryInterface
 var userTable = "user"
 
 // NewUserRepository is once open function
-func NewUserRepository(ctx context.Context) UserRepositoryInterface {
+func NewUserRepository() UserRepositoryInterface {
 	userOnce.Do(func() {
-		userRepository = newUserRepositoryImpl(ctx)
+		userRepository = newUserRepositoryImpl()
 	})
 	return userRepository
 }
 
-func newUserRepositoryImpl(ctx context.Context) UserRepositoryInterface {
+func newUserRepositoryImpl() UserRepositoryInterface {
 	return &UserRepositoryImpl{
-		conn: database.NewConnection(ctx).GetConnection().Collection(userTable),
+		conn: database.NewPgsqlConnection(),
 	}
 }
 
 type UserRepositoryImpl struct {
-	conn *mongo.Collection
+	conn pgsql.AergiaPgsqlInterface
+}
+
+func (u *UserRepositoryImpl) CreateUser(ctx context.Context, user *sql.User) (*sql.User, error) {
+	// I have this func but I'm prioritizing performance
+	// query := u.conn.CreateQuery(user)
+	query := createInsertQuery(user)
+	logs.LOG.Message(query)
+	exec, err := u.conn.GetConnection().Exec(query, userTable)
+	if err != nil {
+		logs.ERROR.Message(query)
+		return nil, err
+	}
+	exists, err := exec.RowsAffected()
+	if err != nil {
+		logs.ERROR.Message(query)
+		return nil, err
+	}
+	if exists == 0 {
+		logs.ERROR.Message(query)
+		return nil, errors.New("cannot create user")
+	}
+	return user, nil
+}
+
+func createInsertQuery(user *sql.User) string {
+	return fmt.Sprintf(`
+	INSERT INTO %s
+		(username, password, email, first_name, last_name, role, created_at, updated_at)
+	VALUES
+		('%s', '%s', '%s', '%s', '%s', '%s','%s','%s')
+	`, userTable,
+		user.Username,
+		user.Password,
+		user.Email,
+		user.FirstName,
+		user.LastName,
+		user.Role,
+		user.CreatedAt,
+		user.UpdatedAt)
 }
 
 func (u *UserRepositoryImpl) GetUser(ctx context.Context, id string) (*sql.User, error) {
-	var user sql.User
-	if err := u.conn.FindOne(ctx, bson.M{"_id": id}).Decode(&user); err != nil {
-		return nil, err
-	}
-	return &user, nil
+	// TODO implement me
+	panic("implement me")
 }

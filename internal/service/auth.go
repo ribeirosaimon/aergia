@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/ribeirosaimon/aergia/internal/repository"
 )
 
@@ -24,8 +25,13 @@ type authServiceImpl struct {
 
 func newAuthServiceImpl() AuthServiceInterface {
 	return &authServiceImpl{
-		// userRepository: repository.NewUserRepository(),
+		userRepository: repository.NewUserRepository(),
 	}
+}
+
+func (a *authServiceImpl) SignUp(ctx context.Context, user *dto.User) error {
+	// TODO implement me
+	panic("implement me")
 }
 
 func (a *authServiceImpl) Login(ctx context.Context, login, pass string) error {

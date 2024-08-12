@@ -12,4 +12,5 @@ type HealthService interface {
 
 type AuthServiceInterface interface {
 	Login(ctx context.Context, login, pass string) error
+	SignUp(ctx context.Context, d *dto.User) error
 }
