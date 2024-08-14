@@ -18,6 +18,7 @@ func NewAergiaServer(config *AergiaConfig) *AergiaServer {
 	engine := gin.New()
 	server := &AergiaServer{ginEngine: engine}
 	server.config = config
+	controller.StartControllers()
 	controller.AddController(server.ginEngine)
 	server.startServer()
 	return server

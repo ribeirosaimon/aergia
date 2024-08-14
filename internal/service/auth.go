@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/ribeirosaimon/aergia-utils/entities/role"
+	"github.com/ribeirosaimon/aergia-utils/entities/sql"
 	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/ribeirosaimon/aergia/internal/repository"
 )
@@ -30,8 +32,22 @@ func newAuthServiceImpl() AuthServiceInterface {
 }
 
 func (a *authServiceImpl) SignUp(ctx context.Context, user *dto.User) error {
-	// TODO implement me
-	panic("implement me")
+	var dbUser sql.User
+
+	dbUser.Email = user.Email
+	dbUser.Username = user.Username
+	dbUser.Password = user.Password
+
+	dbUser.Role = role.USER
+	dbUser.LastName = user.LastName
+	dbUser.FirstName = user.FirstName
+	dbUser.LoginAtempt = 0
+
+	_, err := a.userRepository.CreateUser(ctx, &dbUser)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *authServiceImpl) Login(ctx context.Context, login, pass string) error {

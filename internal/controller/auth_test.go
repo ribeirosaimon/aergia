@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -11,11 +12,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ribeirosaimon/aergia-utils/logs"
+	"github.com/ribeirosaimon/aergia-utils/properties"
+	"github.com/ribeirosaimon/aergia-utils/testutils/aergiatestcontainer"
 	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAuth(t *testing.T) {
+	pgsqlUrl, err := aergiatestcontainer.Pgsql(context.Background())
+	assert.NoError(t, err)
+
+	properties.NewMockPropertiesFile(map[string]string{
+		"postgress.url":      pgsqlUrl,
+		"postgress.database": "postgres",
+	})
 	controller := NewAuthController()
 
 	// all error in input dto
@@ -47,9 +57,6 @@ func TestAuth(t *testing.T) {
 
 	t.Run("success signup", func(t *testing.T) {
 
-		// pgsql, err := aergiatestcontainer.Pgsql(context.Background())
-		// assert.NoError(t, err)
-
 		userDto := dto.User{Username: "test", Email: "test@test.com", Password: "test"}
 
 		userJSON, err := json.Marshal(userDto)
@@ -64,5 +71,6 @@ func TestAuth(t *testing.T) {
 
 		logs.LOG.Message(rr.Body.String())
 		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.Equal(t, "", rr.Body)
 	})
 }

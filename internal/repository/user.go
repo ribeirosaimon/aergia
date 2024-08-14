@@ -58,19 +58,17 @@ func (u *UserRepositoryImpl) CreateUser(ctx context.Context, user *sql.User) (*s
 
 func createInsertQuery(user *sql.User) string {
 	return fmt.Sprintf(`
-	INSERT INTO %s
-		(username, password, email, first_name, last_name, role, created_at, updated_at)
+	INSERT INTO "%s"
+		(username, password, email, first_name, last_name, role)
 	VALUES
-		('%s', '%s', '%s', '%s', '%s', '%s','%s','%s')
+		('%s', '%s', '%s', '%s', '%s', '%s')
 	`, userTable,
 		user.Username,
 		user.Password,
 		user.Email,
 		user.FirstName,
 		user.LastName,
-		user.Role,
-		user.CreatedAt,
-		user.UpdatedAt)
+		user.Role)
 }
 
 func (u *UserRepositoryImpl) GetUser(ctx context.Context, id string) (*sql.User, error) {

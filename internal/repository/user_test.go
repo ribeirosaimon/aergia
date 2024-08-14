@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -15,7 +17,8 @@ func TestUser(t *testing.T) {
 	// pgsqlUrl, err := aergiatestcontainer.Pgsql(ctx)
 	// assert.Nil(t, err)
 
-	pgsqlUrl := "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=frajolinha202"
+	pass := os.Getenv("DEFAULT_SAIMON_PASSWORD")
+	pgsqlUrl := fmt.Sprintf("postgres://localhost:5432/postgres?user=postgres&password=%s", pass)
 
 	properties.NewMockPropertiesFile(map[string]string{
 		"postgress.url":      pgsqlUrl,

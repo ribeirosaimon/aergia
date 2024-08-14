@@ -38,7 +38,7 @@ func (a *authControllerImpl) SignUp(c *gin.Context) {
 		return
 	}
 	a.authService.SignUp(c, &userDto)
-	response.AergiaResponseOk(c, "uhu")
+	response.AergiaResponseOk(c, nil)
 }
 
 func (a *authControllerImpl) Login(c *gin.Context) {
@@ -57,7 +57,7 @@ func (a *authControllerImpl) Login(c *gin.Context) {
 	a.authService.Login(c, loginReq.Login, loginReq.Password)
 }
 
-func init() {
+func AuthControllers() {
 	NewAergiaController(authGroup, "", http.MethodPost, NewAuthController().Login)
 	NewAergiaController(authGroup, "/signup", http.MethodPost, NewAuthController().SignUp)
 }
