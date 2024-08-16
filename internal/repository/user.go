@@ -39,7 +39,7 @@ func (u *UserRepositoryImpl) CreateUser(ctx context.Context, user *sql.User) (*s
 	// query := u.conn.CreateQuery(user)
 	query := createInsertQuery(user)
 	logs.LOG.Message(query)
-	exec, err := u.conn.GetConnection().Exec(query, userTable)
+	exec, err := u.conn.GetConnection().Exec(query)
 	if err != nil {
 		logs.ERROR.Message(query)
 		return nil, err

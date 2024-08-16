@@ -20,6 +20,7 @@ import (
 
 func TestAuth(t *testing.T) {
 	pgsqlUrl, err := aergiatestcontainer.Pgsql(context.Background())
+	logs.LOG.Message(pgsqlUrl)
 	assert.NoError(t, err)
 
 	properties.NewMockPropertiesFile(map[string]string{
@@ -56,7 +57,6 @@ func TestAuth(t *testing.T) {
 	}
 
 	t.Run("success signup", func(t *testing.T) {
-
 		userDto := dto.User{Username: "test", Email: "test@test.com", Password: "test"}
 
 		userJSON, err := json.Marshal(userDto)
