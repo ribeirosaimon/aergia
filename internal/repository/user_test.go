@@ -2,29 +2,32 @@ package repository
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/ribeirosaimon/aergia-utils/constants"
 	"github.com/ribeirosaimon/aergia-utils/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/properties"
+	"github.com/ribeirosaimon/aergia-utils/testutils/aergiatestcontainer"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUser(t *testing.T) {
 	ctx := context.Background()
-	// pgsqlUrl, err := aergiatestcontainer.Pgsql(ctx)
-	// assert.Nil(t, err)
+	pgsqlUrl, err := aergiatestcontainer.Pgsql(ctx)
+	assert.Nil(t, err)
 
-	pass := os.Getenv("DEFAULT_SAIMON_PASSWORD")
-	pgsqlUrl := fmt.Sprintf("postgres://localhost:5432/postgres?user=postgres&password=%s", pass)
+	err = sql.MockCreateTableDatabase(pgsqlUrl, map[string]bool{
+		"user.sql": true,
+	})
+	assert.Nil(t, err)
 
 	properties.NewMockPropertiesFile(map[string]string{
-		"postgress.url":      pgsqlUrl,
-		"postgress.database": "postgres",
+		"postgress.url":          pgsqlUrl,
+		"postgress.database":     "postgres",
+		string(constants.AERGIA): string(constants.DEV),
 	})
-	// connPgsql := pgsql.NewConnPgsql(pgsql.WithUrl(pgsqlUrl), pgsql.WithDatabase("motion"))
+
 	repository := NewUserRepository()
 
 	t.Run("insert user in database", func(t *testing.T) {

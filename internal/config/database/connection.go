@@ -18,6 +18,5 @@ func NewMongoConnection(ctx context.Context) mongo.AergiaMongoInterface {
 func NewPgsqlConnection() pgsql.AergiaPgsqlInterface {
 	return pgsql.NewConnPgsql(
 		pgsql.WithUrl(properties.GetEnvironmentValue(constants.PostgressUrl)),
-		pgsql.WithDatabase(properties.GetEnvironmentValue(constants.PostgressDatabase)),
 	)
 }

@@ -5,7 +5,10 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirosaimon/aergia-utils/constants"
+	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/response"
+	"github.com/ribeirosaimon/aergia/internal/controller/mock"
 	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/ribeirosaimon/aergia/internal/service"
 )
@@ -16,7 +19,12 @@ var authController AuthControllerInterface
 
 func NewAuthController() AuthControllerInterface {
 	authOnce.Do(func() {
-		authController = newAuthControllerImpl()
+		switch properties.GetEnvironmentMode() {
+		case constants.PROD, constants.DEV:
+			authController = newAuthControllerImpl()
+		default:
+			authController = new(mock.AuthControllerMock)
+		}
 	})
 	return authController
 }

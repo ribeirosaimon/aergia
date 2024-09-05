@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirosaimon/aergia-utils/constants"
+	"github.com/ribeirosaimon/aergia-utils/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/logs"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/testutils/aergiatestcontainer"
@@ -24,9 +25,14 @@ func TestAuth(t *testing.T) {
 	assert.NoError(t, err)
 
 	properties.NewMockPropertiesFile(map[string]string{
-		"postgress.url":      pgsqlUrl,
-		"postgress.database": "postgres",
+		"postgress.url":          pgsqlUrl,
+		string(constants.AERGIA): string(constants.DEV),
 	})
+
+	err = sql.MockCreateTableDatabase(pgsqlUrl, map[string]bool{
+		"user.sql": true,
+	})
+	assert.NoError(t, err)
 	controller := NewAuthController()
 
 	// all error in input dto
@@ -42,7 +48,7 @@ func TestAuth(t *testing.T) {
 		t.Run(v.testName, func(t *testing.T) {
 			userJSON, err := json.Marshal(v.userIput)
 			assert.NoError(t, err)
-			body := ioutil.NopCloser(bytes.NewBuffer(userJSON))
+			body := bytes.NewBuffer(userJSON)
 
 			rr := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(rr)
@@ -57,11 +63,12 @@ func TestAuth(t *testing.T) {
 	}
 
 	t.Run("success signup", func(t *testing.T) {
+
 		userDto := dto.User{Username: "test", Email: "test@test.com", Password: "test"}
 
 		userJSON, err := json.Marshal(userDto)
 		assert.NoError(t, err)
-		body := ioutil.NopCloser(bytes.NewBuffer(userJSON))
+		body := bytes.NewBuffer(userJSON)
 
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
@@ -71,6 +78,6 @@ func TestAuth(t *testing.T) {
 
 		logs.LOG.Message(rr.Body.String())
 		assert.Equal(t, http.StatusOK, rr.Code)
-		assert.Equal(t, "", rr.Body)
+		assert.Equal(t, "", rr.Body.String())
 	})
 }

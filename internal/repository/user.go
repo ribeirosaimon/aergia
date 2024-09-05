@@ -6,10 +6,13 @@ import (
 	"sync"
 
 	"github.com/pkg/errors"
+	"github.com/ribeirosaimon/aergia-utils/constants"
 	"github.com/ribeirosaimon/aergia-utils/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/logs"
+	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/storage/pgsql"
 	"github.com/ribeirosaimon/aergia/internal/config/database"
+	"github.com/ribeirosaimon/aergia/internal/repository/mock"
 )
 
 var userOnce sync.Once
@@ -19,7 +22,12 @@ var userTable = "user"
 // NewUserRepository is once open function
 func NewUserRepository() UserRepositoryInterface {
 	userOnce.Do(func() {
-		userRepository = newUserRepositoryImpl()
+		switch properties.GetEnvironmentMode() {
+		case constants.PROD, constants.DEV:
+			userRepository = newUserRepositoryImpl()
+		default:
+			userRepository = new(mock.UserRepositoryMock)
+		}
 	})
 	return userRepository
 }

@@ -2,6 +2,9 @@ package config
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirosaimon/aergia-utils/constants"
+	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia/internal/controller"
 )
 
@@ -20,6 +23,9 @@ func NewAergiaServer(config *AergiaConfig) *AergiaServer {
 	server.config = config
 	controller.StartControllers()
 	controller.AddController(server.ginEngine)
+
+	sql.CreateTableDatabase(properties.GetEnvironmentValue(constants.PostgressUrl))
+
 	server.startServer()
 	return server
 }
