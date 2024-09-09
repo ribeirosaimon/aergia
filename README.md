@@ -1,4 +1,6 @@
 Design: Preciso de uma forma que seja fácil de manter e de adicionar complexidade, porém também não posso simplesmente pensar apenas no início do projeto. A ideia é que ele vá crescendo conforme a demanda.
+
+
 1- Fiz um utilitário separado, com entidades e classes que posso usar em todo o projeto, em todos os microserviços:
     • Centralizar os valores das constantes.
     • Entidades fixas para todos os microserviços.
