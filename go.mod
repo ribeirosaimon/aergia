@@ -2,8 +2,6 @@ module github.com/ribeirosaimon/aergia
 
 go 1.22.1
 
-replace github.com/ribeirosaimon/aergia-utils => /home/saimon/Documents/Estudos/aergia-project/aergia-utils
-
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/pkg/errors v0.9.1
