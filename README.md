@@ -22,14 +22,14 @@ Também estou utilizando o padrão de inicialização única com sync.Once.
 
 ![image](https://github.com/user-attachments/assets/81e9d23c-76b0-41c6-8d5d-0ad16b64af6c)
 
-	Aqui estou apenas viajando nos pensamentos! Ainda preciso definir a arquitetura, pois a ideia é fazer um home-broker, não é um simples CRUD. Tenho que pensar em escalabilidade, disponibilidade, segurança. O ideal é uma arquitetura baseada em eventos, talvez utilizando algum padrão para ajudar na consistência dos dados (ainda estou estudando esse tipo de arquitetura).
+Aqui estou apenas viajando nos pensamentos! Ainda preciso definir a arquitetura, pois a ideia é fazer um home-broker, não é um simples CRUD. Tenho que pensar em escalabilidade, disponibilidade, segurança. O ideal é uma arquitetura baseada em eventos, talvez utilizando algum padrão para ajudar na consistência dos dados (ainda estou estudando esse tipo de arquitetura).
 
 Facilidade de manutenção:
 Quero deixar o padrão MVC bem nítido. Para isso, tomei algumas decisões de design para facilitar a adição de controllers. Ainda não sei se essa é a melhor solução:
 
 ![image](https://github.com/user-attachments/assets/b3b77b09-b04c-43da-a3b6-c9c4db913b40)
 
-	Cada controlador tem seu init, que adiciona no mapa. Também quero adicionar as autenticações aqui, assim fica fácil controlar tudo, apenas acessando o controller de cada função.
+Cada controlador tem seu init, que adiciona no mapa. Também quero adicionar as autenticações aqui, assim fica fácil controlar tudo, apenas acessando o controller de cada função.
 
 Tudo é por interface, para respeitar o padrão SOLID.
 	Por usar interfaces, os mocks são de fácil acesso, bastando retornar a interface mockada, injetar nas dependências e controlar em qual ambiente está rodando.
@@ -41,4 +41,4 @@ Tudo segue o mesmo padrão: pela facilidade do test container, posso inicializar
 
 ![image](https://github.com/user-attachments/assets/d8e63733-fd52-44bf-b68c-a6ba8f5097cf)
 
-	Este é um projeto de estudo que desenvolvo no meu tempo livre, sempre que possível. Há muitas melhorias a serem feitas, diversos erros e várias coisas que ainda não sei, mas eu me desafio constantemente a pensar: 'Como faria se fosse meu?' Essa abordagem me permite testar tudo o que aprendo ao longo do tempo. Tenho vários projetos nos quais, com o passar dos meses, reviso e identifico decisões erradas. Com certeza, em breve terei que reavaliar algumas escolhas que fiz neste também.
+Este é um projeto de estudo que desenvolvo no meu tempo livre, sempre que possível. Há muitas melhorias a serem feitas, diversos erros e várias coisas que ainda não sei, mas eu me desafio constantemente a pensar: 'Como faria se fosse meu?' Essa abordagem me permite testar tudo o que aprendo ao longo do tempo. Tenho vários projetos nos quais, com o passar dos meses, reviso e identifico decisões erradas. Com certeza, em breve terei que reavaliar algumas escolhas que fiz neste também.
