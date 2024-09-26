@@ -2,11 +2,12 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/testutils/aergiatestcontainer"
 	"github.com/stretchr/testify/assert"
@@ -22,19 +23,21 @@ func TestUser(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	properties.NewMockPropertiesFile(map[string]string{
-		"postgress.url":          pgsqlUrl,
-		"postgress.database":     "postgres",
-		string(constants.AERGIA): string(constants.DEV),
+	// melhor ser string, pois esse valor tem que ser imutavel
+	properties.NewMockPropertiesFile(map[string][]byte{
+		"postgress.url":          []byte(pgsqlUrl),
+		"postgress.database":     []byte("postgres"),
+		string(constants.AERGIA): []byte(constants.DEV),
 	})
 
 	repository := NewUserRepository()
 
 	t.Run("insert user in database", func(t *testing.T) {
+
 		user := sql.User{
 			Password:  "password",
-			Username:  "username",
-			Email:     "email",
+			Username:  fmt.Sprintf("username_%d", 1),
+			Email:     fmt.Sprintf("email_%d", 1),
 			FirstName: "first_name",
 			LastName:  "last_name",
 			Role:      "role",

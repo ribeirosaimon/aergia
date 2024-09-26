@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/logs"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/testutils/aergiatestcontainer"
@@ -24,9 +24,9 @@ func TestAuth(t *testing.T) {
 	logs.LOG.Message(pgsqlUrl)
 	assert.NoError(t, err)
 
-	properties.NewMockPropertiesFile(map[string]string{
-		"postgress.url":          pgsqlUrl,
-		string(constants.AERGIA): string(constants.DEV),
+	properties.NewMockPropertiesFile(map[string][]byte{
+		"postgress.url":          []byte(pgsqlUrl),
+		string(constants.AERGIA): []byte(constants.DEV),
 	})
 
 	err = sql.MockCreateTableDatabase(pgsqlUrl, map[string]bool{
@@ -64,7 +64,7 @@ func TestAuth(t *testing.T) {
 
 	t.Run("success signup", func(t *testing.T) {
 
-		userDto := dto.User{Username: "test", Email: "test@test.com", Password: "test"}
+		userDto := dto.User{Username: "test", Email: "test@test.com", Password: "Test1@asd"}
 
 		userJSON, err := json.Marshal(userDto)
 		assert.NoError(t, err)

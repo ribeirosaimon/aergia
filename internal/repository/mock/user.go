@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
 )
 
 type UserRepositoryMock struct {

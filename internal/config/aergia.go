@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia/internal/controller"
 )

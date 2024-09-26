@@ -13,6 +13,11 @@ import (
 	"github.com/ribeirosaimon/aergia/internal/service"
 )
 
+type AuthControllerInterface interface {
+	Login(c *gin.Context)
+	SignUp(c *gin.Context)
+}
+
 var authGroup = "auth"
 var authOnce sync.Once
 var authController AuthControllerInterface
@@ -45,7 +50,9 @@ func (a *authControllerImpl) SignUp(c *gin.Context) {
 		response.AergiaResponseStatusBadRequest(c, err)
 		return
 	}
-	a.authService.SignUp(c, &userDto)
+	if err := a.authService.SignUp(c, &userDto); err != nil {
+		response.AergiaResponseStatusBadRequest(c, err)
+	}
 	response.AergiaResponseOk(c, nil)
 }
 

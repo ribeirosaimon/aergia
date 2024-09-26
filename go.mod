@@ -6,6 +6,7 @@ replace github.com/ribeirosaimon/aergia-utils => /home/saimon/Documents/Estudos/
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/ribeirosaimon/aergia-utils v1.0.0
 	github.com/stretchr/testify v1.9.0

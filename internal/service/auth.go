@@ -7,8 +7,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/entities/role"
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/role"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/valueobject"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia/internal/dto"
 	"github.com/ribeirosaimon/aergia/internal/repository"
@@ -49,17 +50,25 @@ func (a *authServiceImpl) SignUp(ctx context.Context, user *dto.User) error {
 	}
 
 	var dbUser sql.User
-
-	dbUser.Email = user.Email
-	dbUser.Username = user.Username
-	dbUser.Password = user.Password
-
+	dbUser.ID = valueobject.NewUuid()
+	email, err := valueobject.NewEmail(user.Email)
+	if err != nil {
+		return err
+	}
+	dbUser.Email = *email
+	dbUser.Username = valueobject.NewName(user.Username)
+	password, err := valueobject.NewPassword(user.Password)
+	if err != nil {
+		return err
+	}
+	dbUser.Password = *password
+	dbUser.LastName = valueobject.NewName(user.LastName)
+	dbUser.FirstName = valueobject.NewName(user.FirstName)
 	dbUser.Role = role.USER
-	dbUser.LastName = user.LastName
-	dbUser.FirstName = user.FirstName
+	dbUser.Status = valueobject.PENDING
 	dbUser.LoginAtempt = 0
 
-	_, err := a.userRepository.CreateUser(ctx, &dbUser)
+	_, err = a.userRepository.CreateUser(ctx, &dbUser)
 	if err != nil {
 		return err
 	}
@@ -73,22 +82,30 @@ func (a *authServiceImpl) Login(ctx context.Context, login, pass string) error {
 func (a *authServiceImpl) userValidator(user *dto.User) error {
 	if user.Password == "" {
 		return errors.New("password required")
-	} else {
-		hasSpecialChar := regexp.MustCompile(`[!@#~$%^&*(),.?":{}|<>]`).MatchString(user.Password)
-		hasUppercase := regexp.MustCompile(`[A-Z]`).MatchString(user.Password)
-		hasDigit := regexp.MustCompile(`[0-9]`).MatchString(user.Password)
-
-		if !hasSpecialChar || !hasUppercase || !hasDigit {
-			return errors.New("Password must contain uppercase and lower case characters")
-		}
-
 	}
+
+	allowedUserPassword := 6
+	if len(user.Password) < allowedUserPassword {
+		return errors.New("password too short")
+	}
+
+	hasSpecialChar := regexp.MustCompile(`[!@#~$%^&*(),.?":{}|<>]`).MatchString(user.Password)
+	hasUppercase := regexp.MustCompile(`[A-Z]`).MatchString(user.Password)
+	hasDigit := regexp.MustCompile(`[0-9]`).MatchString(user.Password)
+
+	if !hasSpecialChar || !hasUppercase || !hasDigit {
+		return errors.New("Password must contain uppercase and lower case, digit and special characters")
+	}
+
 	if user.Email == "" {
 		return errors.New("email required")
-	} else {
-		regex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
-		re := regexp.MustCompile(regex)
-		re.MatchString(user.Email)
 	}
+
+	regex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(regex)
+	if matchString := re.MatchString(user.Email); !matchString {
+		return errors.New("email invalid")
+	}
+
 	return nil
 }

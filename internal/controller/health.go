@@ -8,6 +8,10 @@ import (
 	"github.com/ribeirosaimon/aergia/internal/service"
 )
 
+type HealthControllerInterface interface {
+	GetHealth(c *gin.Context)
+}
+
 var healthGroup = "health"
 var healthOnce sync.Once
 var healthController HealthControllerInterface

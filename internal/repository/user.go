@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ribeirosaimon/aergia-utils/constants"
-	"github.com/ribeirosaimon/aergia-utils/entities/sql"
+	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
 	"github.com/ribeirosaimon/aergia-utils/logs"
 	"github.com/ribeirosaimon/aergia-utils/properties"
 	"github.com/ribeirosaimon/aergia-utils/storage/pgsql"

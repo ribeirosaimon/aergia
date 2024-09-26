@@ -11,12 +11,12 @@ import (
 
 func NewMongoConnection(ctx context.Context) mongo.AergiaMongoInterface {
 	return mongo.NewConnMongo(ctx,
-		mongo.WithUrl(properties.GetEnvironmentValue(constants.MongoUrl)),
-		mongo.WithDatabase(properties.GetEnvironmentValue(constants.MongoDatabase)),
+		mongo.WithUrl(string(properties.GetEnvironmentValue(constants.MongoUrl))),
+		mongo.WithDatabase(string(properties.GetEnvironmentValue(constants.MongoDatabase))),
 	)
 }
 func NewPgsqlConnection() pgsql.AergiaPgsqlInterface {
 	return pgsql.NewConnPgsql(
-		pgsql.WithUrl(properties.GetEnvironmentValue(constants.PostgressUrl)),
+		pgsql.WithUrl(string(properties.GetEnvironmentValue(constants.PostgressUrl))),
 	)
 }
