@@ -9,6 +9,10 @@ import (
 	"github.com/ribeirosaimon/aergia/internal/dto"
 )
 
+type HealthService interface {
+	GetHealth() (*dto.Health, error)
+}
+
 var helathOnce sync.Once
 var healthService HealthService
 

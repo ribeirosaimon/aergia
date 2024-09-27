@@ -42,3 +42,7 @@ func AddController(engine *gin.Engine) {
 		}
 	}
 }
+
+func StartControllers() {
+	AuthControllers()
+}
