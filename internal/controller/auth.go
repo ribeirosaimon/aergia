@@ -25,7 +25,7 @@ var authController AuthControllerInterface
 func NewAuthController() AuthControllerInterface {
 	authOnce.Do(func() {
 		switch properties.GetEnvironmentMode() {
-		case constants.PROD, constants.DEV:
+		case constants.PROD, constants.DEV, constants.INTEGRATION:
 			authController = newAuthControllerImpl()
 		default:
 			authController = new(mock.AuthControllerMock)
@@ -57,19 +57,17 @@ func (a *authControllerImpl) SignUp(c *gin.Context) {
 }
 
 func (a *authControllerImpl) Login(c *gin.Context) {
-	type LoginRequest struct {
-		Login    string `json:"login" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
 
-	var loginReq LoginRequest
+	var loginReq dto.Login
 
 	// Bind JSON to struct
 	if err := c.ShouldBindJSON(&loginReq); err != nil {
 		response.AergiaResponseStatusBadRequest(c, err)
 	}
 
-	a.authService.Login(c, loginReq.Login, loginReq.Password)
+	if err := a.authService.Login(c, loginReq.Email, loginReq.Password); err != nil {
+		response.AergiaResponseStatusBadRequest(c, err)
+	}
 }
 
 func AuthControllers() {

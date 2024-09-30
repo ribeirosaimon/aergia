@@ -2,9 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"testing"
-	"time"
 
 	"github.com/ribeirosaimon/aergia-utils/constants"
 	"github.com/ribeirosaimon/aergia-utils/domain/entities/sql"
@@ -23,31 +21,25 @@ func TestUser(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	// melhor ser string, pois esse valor tem que ser imutavel
-	properties.NewMockPropertiesFile(map[string][]byte{
-		"postgress.url":          []byte(pgsqlUrl),
-		"postgress.database":     []byte("postgres"),
-		string(constants.AERGIA): []byte(constants.DEV),
+	properties.NewMockPropertiesFile(map[string]string{
+		"postgress.url":          pgsqlUrl,
+		"postgress.database":     "postgres",
+		string(constants.AERGIA): string(constants.DEV),
 	})
 
 	repository := NewUserRepository()
 
 	t.Run("insert user in database", func(t *testing.T) {
-
-		user := sql.User{
-			Password:  "password",
-			Username:  fmt.Sprintf("username_%d", 1),
-			Email:     fmt.Sprintf("email_%d", 1),
-			FirstName: "first_name",
-			LastName:  "last_name",
-			Role:      "role",
-			Audit: sql.Audit{
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-		}
-		createUser, err := repository.CreateUser(ctx, &user)
+		user, err := sql.NewUser(
+			"user",
+			"P@sw0rd!",
+			"test@test.com",
+			"firstName",
+			"lastName",
+		)
 		assert.Nil(t, err)
-		assert.NotNil(t, createUser)
+
+		err = repository.InsertUser(ctx, user)
+		assert.Nil(t, err)
 	})
 }

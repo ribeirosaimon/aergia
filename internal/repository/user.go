@@ -15,6 +15,11 @@ import (
 	"github.com/ribeirosaimon/aergia/internal/repository/mock"
 )
 
+type UserRepositoryInterface interface {
+	InsertUser(ctx context.Context, user *sql.User) error
+	FindUserByEmail(ctx context.Context, email string) (*sql.User, error)
+}
+
 var userOnce sync.Once
 var userRepository UserRepositoryInterface
 var userTable = "user"
@@ -23,7 +28,7 @@ var userTable = "user"
 func NewUserRepository() UserRepositoryInterface {
 	userOnce.Do(func() {
 		switch properties.GetEnvironmentMode() {
-		case constants.PROD, constants.DEV:
+		case constants.PROD, constants.DEV, constants.INTEGRATION:
 			userRepository = newUserRepositoryImpl()
 		default:
 			userRepository = new(mock.UserRepositoryMock)
@@ -42,26 +47,30 @@ type UserRepositoryImpl struct {
 	conn pgsql.AergiaPgsqlInterface
 }
 
-func (u *UserRepositoryImpl) CreateUser(ctx context.Context, user *sql.User) (*sql.User, error) {
+func (u *UserRepositoryImpl) FindUserByEmail(ctx context.Context, email string) (*sql.User, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (u *UserRepositoryImpl) InsertUser(ctx context.Context, user *sql.User) error {
 	// I have this func but I'm prioritizing performance
-	// query := u.conn.CreateQuery(user)
 	query := createInsertQuery(user)
 	logs.LOG.Message(query)
 	exec, err := u.conn.GetConnection().Exec(query)
 	if err != nil {
 		logs.ERROR.Message(query)
-		return nil, err
+		return err
 	}
 	exists, err := exec.RowsAffected()
 	if err != nil {
 		logs.ERROR.Message(query)
-		return nil, err
+		return err
 	}
 	if exists == 0 {
 		logs.ERROR.Message(query)
-		return nil, errors.New("cannot create user")
+		return errors.New("cannot create user")
 	}
-	return user, nil
+	return nil
 }
 
 func createInsertQuery(user *sql.User) string {
@@ -71,15 +80,11 @@ func createInsertQuery(user *sql.User) string {
 	VALUES
 		('%s', '%s', '%s', '%s', '%s', '%s')
 	`, userTable,
-		user.Username,
-		user.Password,
-		user.Email,
-		user.FirstName,
-		user.LastName,
-		user.Role)
-}
-
-func (u *UserRepositoryImpl) GetUser(ctx context.Context, id string) (*sql.User, error) {
-	// TODO implement me
-	panic("implement me")
+		user.Username.GetValue(),
+		user.Password.GetValue(),
+		user.Email.GetValue(),
+		user.FirstName.GetValue(),
+		user.LastName.GetValue(),
+		user.Role,
+	)
 }

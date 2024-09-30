@@ -24,9 +24,9 @@ func TestAuth(t *testing.T) {
 	logs.LOG.Message(pgsqlUrl)
 	assert.NoError(t, err)
 
-	properties.NewMockPropertiesFile(map[string][]byte{
-		"postgress.url":          []byte(pgsqlUrl),
-		string(constants.AERGIA): []byte(constants.DEV),
+	properties.NewMockPropertiesFile(map[string]string{
+		"postgress.url":          pgsqlUrl,
+		string(constants.AERGIA): string(constants.INTEGRATION),
 	})
 
 	err = sql.MockCreateTableDatabase(pgsqlUrl, map[string]bool{
@@ -72,12 +72,31 @@ func TestAuth(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(rr)
-		c.Request = httptest.NewRequest(http.MethodGet, "/auth/signup", body)
+		c.Request = httptest.NewRequest(http.MethodPost, "/auth/signup", body)
 
 		controller.SignUp(c)
 
 		logs.LOG.Message(rr.Body.String())
 		assert.Equal(t, http.StatusOK, rr.Code)
 		assert.Equal(t, "", rr.Body.String())
+	})
+
+	t.Run("success login", func(t *testing.T) {
+
+		userDto := dto.Login{Email: "test@test.com", Password: "Test1@asd"}
+
+		userJSON, err := json.Marshal(userDto)
+		assert.NoError(t, err)
+		body := bytes.NewBuffer(userJSON)
+
+		rr := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(rr)
+		c.Request = httptest.NewRequest(http.MethodPost, "/auth/login", body)
+
+		controller.Login(c)
+
+		logs.LOG.Message(rr.Body.String())
+		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.NotEqual(t, "", rr.Body.String())
 	})
 }
